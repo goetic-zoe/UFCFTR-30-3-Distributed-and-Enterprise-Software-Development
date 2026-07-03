@@ -16,7 +16,9 @@ Including another URLconf
 """
 from django.contrib import admin
 from django.urls import path
+from digital_marketplace_platform.views import product_list
 
 urlpatterns = [
     path('admin/', admin.site.urls),
+    path('', product_list, name='product_list'),
 ]
