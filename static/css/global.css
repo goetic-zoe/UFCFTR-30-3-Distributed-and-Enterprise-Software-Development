@@ -7,3 +7,7 @@ p{
 h1{
     color:white;
 }
+.dropdown-menu-end{
+    right:0;
+    left:auto;
+}
