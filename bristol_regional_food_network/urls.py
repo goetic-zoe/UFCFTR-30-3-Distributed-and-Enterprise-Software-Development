@@ -17,6 +17,9 @@ Including another Urlconf
 from django.contrib import admin
 from django.urls import path
 
+from digital_marketplace_platform.views import home
+
 urlpatterns = [
     path('admin/', admin.site.urls),
+    path('', home, name='home'),
 ]
