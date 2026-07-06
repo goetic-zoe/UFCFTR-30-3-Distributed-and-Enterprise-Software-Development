@@ -7,6 +7,9 @@ from .models import Product, CartItem
 def home(request):
     return render(request, 'home.html')
 
+def pledge(request):
+    return render(request, 'pledge.html')
+
 def register(request):
     if request.method == 'POST':
         form = CustomUserCreationForm(request.POST)
