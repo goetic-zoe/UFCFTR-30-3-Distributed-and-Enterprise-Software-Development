@@ -39,8 +39,8 @@ class Product(models.Model):
         ("seasonal", "Seasonal Specialties"),
     ]
     type = models.CharField(max_length=50, choices=TYPES)
-    created_at = models.DateTimeField(auto_now_add=True)
-    updated_at = models.DateTimeField(auto_now=True)
+    created_at = models.DateTimeField(auto_now_add=True, null=True)
+    updated_at = models.DateTimeField(auto_now=True, null=True)
     allergens = models.TextField(blank=True, null=True)
     image = models.ImageField(upload_to="product_images/", null=True, blank=True)
 
