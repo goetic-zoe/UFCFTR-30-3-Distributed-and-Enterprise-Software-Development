@@ -4,7 +4,6 @@ from django.db import models
 
 class User(AbstractUser):
     USER_TYPE_CHOICES = (
-        ('admin', 'Admin'),
         ('customer', 'Customer'),
         ('producer', 'Producer'),
     )
