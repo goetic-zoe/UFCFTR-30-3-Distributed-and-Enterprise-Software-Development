@@ -1,5 +1,5 @@
 from django.shortcuts import render, redirect
-from django.contrib.auth import login, authenticate
+from django.contrib.auth import login, authenticate, logout
 from .forms import CustomUserCreationForm
 
 def home(request):
@@ -27,3 +27,7 @@ def user_login(request):
         else:
             return render(request, 'registration/login.html', {'error': 'Invalid credentials'})
     return render(request, 'registration/login.html')
+
+def user_logout(request):
+    logout(request)
+    return redirect('home')
