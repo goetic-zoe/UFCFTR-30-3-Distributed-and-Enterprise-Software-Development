@@ -2,7 +2,7 @@ from django.contrib.auth.models import AbstractUser
 
 from django.db import models
 
-class BRFNUser(AbstractUser):
+class User(AbstractUser):
     USER_TYPE_CHOICES = (
         ('admin', 'Admin'),
         ('customer', 'Customer'),
@@ -13,18 +13,18 @@ class BRFNUser(AbstractUser):
 
     groups = models.ManyToManyField(
         'auth.Group',
-        related_name='brfnuser_set'
+        related_name='custom_user_groups'
     )
     user_permissions = models.ManyToManyField(
         'auth.Permission',
-        related_name='brfnuser_set'
+        related_name='custom_user_permissions'
     )
 
     def __str__(self):
         return self.username
 
 class Product(models.Model):
-    producer = models.ForeignKey(BRFNUser, related_name='products', on_delete=models.CASCADE)
+    producer = models.ForeignKey(User, related_name='products', on_delete=models.CASCADE)
     name = models.CharField(max_length=100)
     description = models.TextField()
     price = models.DecimalField(max_digits=10, decimal_places=2)
@@ -35,7 +35,7 @@ class Product(models.Model):
         return self.name
 
 class Order(models.Model):
-    customer = models.ForeignKey('BRFNUser', related_name='orders', on_delete=models.CASCADE)
+    customer = models.ForeignKey('User', related_name='orders', on_delete=models.CASCADE)
     products = models.ManyToManyField(Product, through='OrderItem')
     total_amount = models.DecimalField(max_digits=10, decimal_places=2)
     order_date = models.DateTimeField(auto_now_add=True)
