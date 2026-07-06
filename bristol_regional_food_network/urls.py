@@ -16,10 +16,11 @@ Including another Urlconf
 """
 from django.contrib import admin
 from django.urls import path
-
-from digital_marketplace_platform.views import home
+from digital_marketplace_platform.views import home, register, user_login
 
 urlpatterns = [
     path('admin/', admin.site.urls),
     path('', home, name='home'),
+    path('register/', register, name='register'),
+    path('login/', user_login, name='login'),
 ]
