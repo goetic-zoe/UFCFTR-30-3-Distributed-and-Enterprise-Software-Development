@@ -1,4 +1,5 @@
 {% extends "base.html" %}
+{% load filters %}
 
 {% block content %}
 <h2 style="color: white">Your Cart</h2>
@@ -18,6 +19,7 @@
             <td>{{ item.product.name }}</td>
             <td>{{ item.quantity }}</td>
             <td>£{{ item.product.price }}</td>
+            <td>£{{ item.product.price |mul:item.quantity }}</td>
         </tr>
         {% endfor %}
     </tbody>
