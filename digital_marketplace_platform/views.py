@@ -1,6 +1,8 @@
 from django.shortcuts import render, redirect
 from django.contrib.auth import login, authenticate, logout
 from .forms import CustomUserCreationForm
+from .models import Product
+
 
 def home(request):
     return render(request, 'home.html')
@@ -31,3 +33,22 @@ def user_login(request):
 def user_logout(request):
     logout(request)
     return redirect('home')
+
+def product_list(request):
+    query = request.GET.get('q', '')
+    filter_type = request.GET.get('type', '')
+
+    # Filter products based on search query and type
+    if query:
+        products = Product.objects.filter(name__icontains=query)
+    else:
+        products = Product.objects.all()
+
+    if filter_type:
+        products = products.filter(type=filter_type)
+
+    return render(request, 'product_list.html', {
+        'products': products,
+        'query': query,
+        'filter_type': filter_type
+    })

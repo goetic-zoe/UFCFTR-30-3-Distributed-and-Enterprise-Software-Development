@@ -1,0 +1,44 @@
+{% extends "base.html" %}
+
+{% block content %}
+<div class="mb-4">
+    <form method="get" action="{% url 'product_list' %}">
+        <div class="input-group mb-3">
+            <input type="text" name="q" value="{{ query }}" class="form-control" placeholder="Search products..." aria-label="Search products" aria-describedby="button-addon2">
+            <button class="btn btn-outline-secondary" type="submit" id="button-addon2">Search</button>
+        </div>
+    </form>
+
+    <div class="mb-3">
+        <label for="type-filter" class="form-label">Filter by Type:</label>
+        <select name="type" id="type-filter" class="form-select" onchange="this.form.submit()">
+            <option value="">All</option>
+            {% for type in Product.TYPES %}
+                <option value="{{ type.0 }}" {% if type.0 == filter_type %}selected{% endif %}>{{ type.1 }}</option>
+            {% endfor %}
+        </select>
+    </div>
+</div>
+
+<div class="row">
+    {% for product in products %}
+        <div class="col-md-4 mb-3">
+            <div class="card">
+                {% if product.image %}
+                    <img src="{{ product.image.url }}" class="card-img-top" alt="{{ product.name }}">
+                {% endif %}
+                <div class="card-body">
+                    <h5 class="card-title">{{ product.name }}</h5>
+                    <p class="card-text">{{ product.description }}</p>
+                    <p class="card-text"><strong>Price:</strong> £{{ product.price }}</p>
+                    <p class="card-text"><strong>Type:</strong> {{ product.get_type_display }}</p>
+                </div>
+            </div>
+        </div>
+    {% empty %}
+        <div class="col-md-12">
+            <p>No products found.</p>
+        </div>
+    {% endfor %}
+</div>
+{% endblock %}

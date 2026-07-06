@@ -16,7 +16,7 @@ Including another Urlconf
 """
 from django.contrib import admin
 from django.urls import path
-from digital_marketplace_platform.views import home, register, user_login, user_logout
+from digital_marketplace_platform.views import home, register, user_login, user_logout, product_list
 
 urlpatterns = [
     path('admin/', admin.site.urls),
@@ -24,4 +24,5 @@ urlpatterns = [
     path('register/', register, name='register'),
     path('login/', user_login, name='login'),
     path('logout/', user_logout, name='logout'),
+    path('products/', product_list, name='product_list'),
 ]
