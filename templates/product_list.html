@@ -32,6 +32,7 @@
                     <p class="card-text">{{ product.description }}</p>
                     <p class="card-text"><strong>Price:</strong> £{{ product.price }}</p>
                     <p class="card-text"><strong>Type:</strong> {{ product.get_type_display }}</p>
+                    <a href="{% url 'add_to_cart' product.id %}" class="btn btn-primary">Add to Cart</a>
                 </div>
             </div>
         </div>
