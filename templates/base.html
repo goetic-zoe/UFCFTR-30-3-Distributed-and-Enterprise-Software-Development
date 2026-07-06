@@ -37,6 +37,9 @@
                     <ul class="dropdown-menu dropdown-menu-end" aria-labelledby="navbarDropdown">
                         <li><a class="dropdown-item" href="{% url 'logout' %}">Logout</a></li>
                         <li><a class="dropdown-item" href="{% url 'view_cart' %}">Cart</a></li>
+                        {% if user.is_authenticated and user.user_type == 'producer' %}
+                            <li><a class="dropdown-item" href="{% url 'product_management' %}">Product Management</a></li>
+                        {% endif %}
                     </ul>
                 </li>
             {% else %}

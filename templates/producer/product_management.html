@@ -1,0 +1,32 @@
+{% extends "base.html" %}
+
+{% block content %}
+    <div class="mb-3">
+        <h2 style="color: white">Product Management</h2>
+        <a href="{% url 'add_product' %}" class="btn btn-success">Add New Product</a>
+    </div>
+
+    <div class="row">
+        {% for product in products %}
+            <div class="col-md-4 mb-3">
+                <div class="card">
+                    {% if product.image %}
+                        <img src="{{ product.image.url }}" class="card-img-top" alt="{{ product.name }}">
+                    {% endif %}
+                    <div class="card-body">
+                        <h5 class="card-title">{{ product.name }}</h5>
+                        <p class="card-text">{{ product.description }}</p>
+                        <p class="card-text"><strong>Price:</strong> £{{ product.price }}</p>
+                        <p class="card-text"><strong>Type:</strong> {{ product.get_type_display }}</p>
+                        <a href="{% url 'edit_product' product.id %}" class="btn btn-warning">Edit</a>
+                        <a href="{% url 'delete_product' product.id %}" class="btn btn-danger">Delete</a>
+                    </div>
+                </div>
+            </div>
+        {% empty %}
+            <div class="col-md-12">
+                <p>No products found.</p>
+            </div>
+        {% endfor %}
+    </div>
+{% endblock %}

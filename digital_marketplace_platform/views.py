@@ -1,6 +1,6 @@
 from django.shortcuts import render, redirect, get_object_or_404
 from django.contrib.auth import login, authenticate, logout
-from .forms import CustomUserCreationForm
+from .forms import CustomUserCreationForm, ProductForm
 from .models import Product, CartItem
 
 
@@ -80,3 +80,46 @@ def view_cart(request):
         })
     else:
         return redirect('login')
+
+def product_management(request):
+    if request.user.is_authenticated and request.user.user_type == 'producer':
+        producer_products = Product.get_producer_products(request.user.id)
+        return render(request, 'producer/product_management.html', {'products': producer_products})
+    else:
+        return redirect('home')
+
+def add_product(request):
+    if request.method == 'POST':
+        form = ProductForm(request.POST, request.FILES)
+        if form.is_valid():
+            product = form.save(commit=False)
+            product.producer = request.user
+            product.save()
+            return redirect('product_management')
+    else:
+        form = ProductForm()
+    return render(request, 'producer/add_product.html', {'form': form})
+
+def edit_product(request, product_id):
+    product = get_object_or_404(Product, id=product_id)
+    if request.user == product.producer:
+        if request.method == 'POST':
+            form = ProductForm(request.POST, request.FILES, instance=product)
+            if form.is_valid():
+                form.save()
+                return redirect('product_management')
+        else:
+            form = ProductForm(instance=product)
+        return render(request, 'producer/edit_product.html', {'form': form})
+    else:
+        return redirect('home')
+
+def delete_product(request, product_id):
+    product = get_object_or_404(Product, id=product_id)
+    if request.user == product.producer:
+        if request.method == 'POST':
+            product.delete()
+            return redirect('product_management')
+        return render(request, 'producer/confirm_delete.html', {'product': product})
+    else:
+        return redirect('home')

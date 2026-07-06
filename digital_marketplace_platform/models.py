@@ -44,6 +44,10 @@ class Product(models.Model):
     allergens = models.TextField(blank=True, null=True)
     image = models.ImageField(upload_to="product_images/", null=True, blank=True)
 
+    @classmethod
+    def get_producer_products(cls, producer_id):
+        return cls.objects.filter(producer_id=producer_id)
+
     def __str__(self):
         return self.name
 
