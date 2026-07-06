@@ -2,7 +2,7 @@
 
 {% block content %}
     <div class="mb-3">
-        <h2>Edit Product: {{ form.instance.name }}</h2>
+        <h2 style="color: white">Edit Product: {{ form.instance.name }}</h2>
         <form method="post" enctype="multipart/form-data">
             {% csrf_token %}
             {{ form.as_p }}
