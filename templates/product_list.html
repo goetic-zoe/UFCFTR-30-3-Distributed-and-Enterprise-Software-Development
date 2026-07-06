@@ -15,13 +15,23 @@
         </form>
 
         <div class="mb-3">
-            <label for="type-filter" class="form-label" style="color: white">Filter by Type:</label>
-            <select name="type" id="type-filter" class="form-select" onchange="this.form.submit()">
-                <option value="">All</option>
-                {% for type in Product.TYPES %}
-                    <option value="{{ type.0 }}" {% if type.0 == filter_type %}selected{% endif %}>{{ type.1 }}</option>
-                {% endfor %}
-            </select>
+            <form method="get" action="{% url 'product_list' %}">
+                <label for="type-filter" class="form-label" style="color: white">Filter by Type:</label>
+                <select name="type" id="type-filter" class="form-select" onchange="this.form.submit()">
+                    <option value="">All</option>
+                    <option value="vegetables" {% if filter_type == "vegetables" %}selected{% endif %}>Vegetables</option>
+                    <option value="fruit" {% if filter_type == "fruit" %}selected{% endif %}>Fruit</option>
+                    <option value="dairy_eggs" {% if filter_type == "dairy_eggs" %}selected{% endif %}>Dairy & Eggs</option>
+                    <option value="bakery" {% if filter_type == "bakery" %}selected{% endif %}>Bakery</option>
+                    <option value="preserves" {% if filter_type == "preserves" %}selected{% endif %}>Preserves</option>
+                    <option value="seasonal" {% if filter_type == "seasonal" %}selected{% endif %}>Seasonal Specialties</option>
+                    <option value="other" {% if filter_type == "other" %}selected{% endif %}>Other</option>
+                    {#                {% for type in Product.TYPES %}#}
+                    {#                    <option value="{{ type.0 }}" {% if type.0 == filter_type %}selected{% endif %}>{{ type.1 }}</option>#}
+                    {#                {% endfor %}#}
+                </select>
+                <input type="hidden" name="q" value="{{ query }}">
+            </form>
         </div>
     </div>
 

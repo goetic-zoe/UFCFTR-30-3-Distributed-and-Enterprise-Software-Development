@@ -37,6 +37,7 @@ class Product(models.Model):
         ("bakery", "Bakery"),
         ("preserves", "Preserves"),
         ("seasonal", "Seasonal Specialties"),
+        ("other", "Other"),
     ]
     type = models.CharField(max_length=50, choices=TYPES)
     created_at = models.DateTimeField(auto_now_add=True, null=True)
