@@ -1,6 +1,11 @@
 {% extends "base.html" %}
 
 {% block content %}
+    <style>
+        p{
+            color: black;
+        }
+    </style>
     <div class="mb-3">
         <h2>Product Management</h2>
         <a href="{% url 'add_product' %}" class="btn btn-success">Add New Product</a>
@@ -27,7 +32,7 @@
             </div>
         {% empty %}
             <div class="col-md-12">
-                <p>No products found.</p>
+                <p style="color:white;">No products found.</p>
             </div>
         {% endfor %}
     </div>
