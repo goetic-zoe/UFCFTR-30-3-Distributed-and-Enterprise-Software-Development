@@ -1,10 +1,55 @@
 {% extends "base.html" %}
 
 {% block content %}
-  <div class="row">
-    <div class="col-md-12">
-      <h1>Welcome to the Bristol Regional Food Network Marketplace</h1>
-      <p>This is a placeholder page for testing.</p>
+    <div class="row">
+        <div class="col-md-12">
+            <h1 style="text-align: center">Welcome to the Bristol Regional Food Network Marketplace</h1>
+            <p style="text-align: center">
+                BRFN is a community initiative that aims to connect local food producers with consumers within a twenty-mile
+                radius of Bristol. We currently provide our services to upwards forty small-to-medium enterprises that previously
+                have had issues reaching customers beyond farmers markets and direct farm gate sales.
+            </p>
+        </div>
     </div>
-  </div>
+    <div class="row justify-content-center">
+        <div class="col-4">
+            <div class="card" style="width: 100%;">
+{#                <img src="..." class="card-img-top" alt="...">#}
+                <div style="text-align: center" class="card-body">
+                    <h5 class="card-title">Locally Sourced</h5>
+                    <p style="color: black" class="card-text">
+                        All of our produce is locally sourced within 20 miles of Bristol to not just improve our suppliers
+                        experience but to also allow you, the customer, to gain access to the most fresh and ripe produce available.
+                    </p>
+                    <a href="#" class="btn btn-primary">Meet our suppliers</a>
+                </div>
+            </div>
+        </div>
+        <div class="col-4">
+            <div class="card" style="width: 100%;">
+{#                <img src="..." class="card-img-top" alt="...">#}
+                <div style="text-align: center" class="card-body">
+                    <h5 class="card-title">Our Products</h5>
+                    <p style="color: black" class="card-text">
+                        Our products are fresh, locally sourced and abide by our sustainability pledge delivering you the
+                        best produce in your local area at reasonable prices that keep you, our farmers and our environment happy.
+                    </p>
+                    <a href="#" class="btn btn-primary">See our products</a>
+                </div>
+            </div>
+        </div>
+        <div class="col-4">
+            <div class="card" style="width: 100%;">
+{#                <img src="..." class="card-img-top" alt="...">#}
+                <div style="text-align: center" class="card-body">
+                    <h5 class="card-title">Sustainability Pledge</h5>
+                    <p style="color: black" class="card-text">
+                        Bristol Regional Food Network has pledged to keep sustainability at the forefront of our operations
+                        making sure that we limit our carbon footprint in every step of your products journey to you.
+                    </p>
+                    <a href="#" class="btn btn-primary">View our pledge</a>
+                </div>
+            </div>
+        </div>
+    </div>
 {% endblock %}
