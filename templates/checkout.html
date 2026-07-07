@@ -1,0 +1,132 @@
+{% extends "base.html" %}
+{% load static %}
+
+{% block content %}
+<div class="container">
+    <h2 style="color: white">Checkout</h2>
+
+    <div class="row">
+        <div class="col-md-6">
+            <form id="checkout-form" method="post">
+                {% csrf_token %}
+                <div class="mb-3">
+                    <label for="delivery_address" class="form-label">Delivery Address</label>
+                    <textarea class="form-control" id="delivery_address" name="delivery_address" rows="3" required></textarea>
+                </div>
+                <div class="mb-3">
+                    <label for="postcode" class="form-label">Postcode</label>
+                    <input type="text" class="form-control" id="postcode" name="postcode" required>
+                </div>
+                <button type="submit" class="btn btn-primary" id="checkout-button">Place Order</button>
+            </form>
+        </div>
+    </div>
+
+    <!-- PayPal SDK script -->
+    <script src="https://www.sandbox.paypal.com/web-sdk/v6/core"></script>
+    <script>
+        async function onPayPalWebSdkLoaded() {
+            try {
+                // Create PayPal SDK instance
+                const sdkInstance = await window.paypal.createInstance({
+                    clientId: "ASr5n8E-OBFe06fsZG1PXVZOpQCWTOC0msab-TD11c1uGoFr8KQlsah8wWmFcXUiCuC0P67U96SroGgr",  // Use the Client ID from settings.py
+                    components: ["paypal-payments"],
+                    pageType: "checkout",
+                });
+
+                // Set up PayPal button if eligible
+                sdkInstance.findEligibleMethods({ currencyCode: "GBP" })
+                    .then(paymentMethods => {
+                        if (paymentMethods.isEligible("paypal")) {
+                            configurePayPalButton(sdkInstance);
+                        }
+                    })
+                    .catch(error => console.error("Error checking eligibility:", error));
+            } catch (error) {
+                console.error("SDK initialization error:", error);
+            }
+        }
+
+        function configurePayPalButton(sdkInstance) {
+            const checkoutForm = document.getElementById('checkout-form');
+
+            sdkInstance.createPayPalOneTimePaymentSession({
+                async onApprove(data) {
+                    try {
+                        // Capture order
+                        const response = await fetch('/paypal-api/checkout/orders/capture', {
+                            method: 'POST',
+                            headers: {
+                                'Content-Type': 'application/json',
+                            },
+                            body: JSON.stringify({ orderId: data.orderId }),
+                        });
+                        const captureData = await response.json();
+                        if (captureData.status === 'COMPLETED') {
+                            alert('Payment successful!');
+                            // Optionally, redirect to an order confirmation page
+                        } else {
+                            alert('Payment failed. Please try again.');
+                        }
+                    } catch (error) {
+                        console.error("Capture payment error:", error);
+                        alert('An error occurred while capturing the payment.');
+                    }
+                },
+                onCancel(data) {
+                    console.log("Payment cancelled:", data);
+                    alert('Payment cancelled.');
+                },
+                onError(error) {
+                    console.error("Payment error:", error);
+                    alert('An error occurred during payment.');
+                },
+            });
+
+            const paypalButton = document.createElement('paypal-button');
+            checkoutForm.appendChild(paypalButton);
+
+            // Handle form submission
+            checkoutForm.addEventListener('submit', async (event) => {
+                event.preventDefault();
+
+                // Collect delivery details from the form
+                const formData = new FormData(checkoutForm);
+                const deliveryAddress = formData.get('delivery_address');
+                const postcode = formData.get('postcode');
+
+                try {
+                    // Create order on server-side
+                    const response = await fetch('/paypal-api/checkout/orders/create', {
+                        method: 'POST',
+                        headers: {
+                            'Content-Type': 'application/json',
+                            'X-CSRFToken': '{{ csrf_token }}'
+                        },
+                        body: JSON.stringify({
+                            delivery_address: deliveryAddress,
+                            postcode: postcode
+                        }),
+                    });
+                    const orderData = await response.json();
+                    if (orderData.orderId) {
+                        // Start PayPal payment session
+                        await sdkInstance.createPayPalOneTimePaymentSession().start(
+                            { presentationMode: 'auto' },
+                            () => ({ orderId: orderData.orderId })
+                        );
+                    } else {
+                        alert('Failed to create order. Please try again.');
+                    }
+                } catch (error) {
+                    console.error("Create order error:", error);
+                    alert('An error occurred while creating the order.');
+                }
+            });
+        }
+
+        // Load PayPal SDK
+        window.addEventListener('load', onPayPalWebSdkLoaded);
+    </script>
+</div>
+{% endblock %}

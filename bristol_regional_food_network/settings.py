@@ -105,6 +105,9 @@ AUTH_PASSWORD_VALIDATORS = [
 
 AUTH_USER_MODEL = 'digital_marketplace_platform.User'
 
+PAYPAL_CLIENT_ID = 'ASr5n8E-OBFe06fsZG1PXVZOpQCWTOC0msab-TD11c1uGoFr8KQlsah8wWmFcXUiCuC0P67U96SroGgr'  # Replace with your sandbox client ID
+PAYPAL_SECRET_ID = 'EKfya8gu_l9Yhm0p-PAOlnc97qZJXjJcftAhCQUfsnHgc6YxxDrwvuPal26MoMGglSmZqe8gTvKxqVyC'   # Replace with your sandbox secret ID
+
 # Internationalization
 # https://docs.djangoproject.com/en/6.0/topics/i18n/
 

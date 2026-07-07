@@ -2,29 +2,32 @@
 {% load filters %}
 
 {% block content %}
-<h2 style="color: white">Your Cart</h2>
+    <h2 style="color: white">Your Cart</h2>
 
-<table class="table">
-    <thead>
+    <table class="table">
+        <thead>
         <tr>
             <th>Product Name</th>
             <th>Quantity</th>
             <th>Price</th>
             <th>Total</th>
         </tr>
-    </thead>
-    <tbody>
+        </thead>
+        <tbody>
         {% for item in cart_items %}
-        <tr>
-            <td>{{ item.product.name }}</td>
-            <td>{{ item.quantity }}</td>
-            <td>£{{ item.product.price }}</td>
-            <td>£{{ item.product.price |mul:item.quantity }}</td>
-        </tr>
+            <tr>
+                <td>{{ item.product.name }}</td>
+                <td>{{ item.quantity }}</td>
+                <td>£{{ item.product.price }}</td>
+                <td>£{{ item.product.price |mul:item.quantity }}</td>
+            </tr>
         {% endfor %}
-    </tbody>
-</table>
+        </tbody>
+    </table>
 
-<p><strong>Total Price:</strong> £{{ total_price }}</p>
-<a href="{% url 'product_list' %}" class="btn btn-primary">Continue Shopping</a>
+    <p><strong>Total Price:</strong> £{{ total_price }}</p>
+    <a href="{% url 'product_list' %}" class="btn btn-primary">Continue Shopping</a>
+    {% if cart_items %}
+        <a href="{% url 'checkout' %}" class="btn btn-success float-end">Proceed to Checkout</a>
+    {% endif %}
 {% endblock %}

@@ -1,8 +1,11 @@
+import requests
+from django.http import JsonResponse
 from django.shortcuts import render, redirect, get_object_or_404
 from django.contrib.auth import login, authenticate, logout
 from .forms import CustomUserCreationForm, ProductForm
-from .models import Product, CartItem
-
+from .models import Product, CartItem, Order, OrderItem
+import json
+import uuid
 
 def home(request):
     return render(request, 'home.html')
@@ -123,3 +126,127 @@ def delete_product(request, product_id):
         return render(request, 'producer/confirm_delete.html', {'product': product})
     else:
         return redirect('home')
+
+def checkout(request):
+    if request.user.is_authenticated:
+        return render(request, 'checkout.html')
+    else:
+        return redirect('login')
+
+def create_order(request):
+    if request.method == 'POST':
+        try:
+            data = json.loads(request.body)
+            delivery_address = data.get('delivery_address')
+            postcode = data.get('postcode')
+
+            # Calculate total amount
+            cart_items = CartItem.objects.filter(user=request.user)
+            total_amount = sum(item.product.price * item.quantity for item in cart_items)
+
+            # Create order
+            order_id = uuid.uuid4().hex  # Generate a unique order ID
+            order = Order.objects.create(
+                customer=request.user,
+                total_amount=total_amount,
+                delivery_address=delivery_address,
+                postcode=postcode,
+                status='pending'
+            )
+
+            # Create order items
+            for item in cart_items:
+                OrderItem.objects.create(order=order, product=item.product, quantity=item.quantity)
+
+            # Create PayPal order (server-side)
+            paypal_client_id = request.settings.PAYPAL_CLIENT_ID
+            paypal_secret_id = request.settings.PAYPAL_SECRET_ID
+
+            auth_response = requests.post(
+                'https://api.sandbox.paypal.com/v1/oauth2/token',
+                headers={'Accept': 'application/json', 'Accept-Language': 'en_US'},
+                data={
+                    'grant_type': 'client_credentials'
+                },
+                auth=(paypal_client_id, paypal_secret_id)
+            )
+            access_token = auth_response.json().get('access_token')
+
+            order_create_url = 'https://api-m.sandbox.paypal.com/v2/checkout/orders'
+            headers = {
+                'Content-Type': 'application/json',
+                'Authorization': f'Bearer {access_token}'
+            }
+            body = {
+                "intent": "CAPTURE",
+                "purchase_units": [{
+                    "amount": {
+                        "currency_code": "GBP",
+                        "value": str(total_amount)
+                    }
+                }],
+                "application_context": {
+                    "brand_name": "BRFN Marketplace",
+                    "landing_page": "BILLING",
+                    "user_action": "PAY_NOW",
+                    "return_url": "https://example.com/your-approve-url",  # Replace with your return URL
+                    "cancel_url": "https://example.com/your-cancel-url"    # Replace with your cancel URL
+                }
+            }
+
+            response = requests.post(order_create_url, headers=headers, json=body)
+            order_response_data = response.json()
+
+            if 'id' in order_response_data:
+                return JsonResponse({'orderId': order_response_data['id']})
+            else:
+                print(f"Error creating PayPal order: {order_response_data}")
+                return JsonResponse({'error': 'Failed to create PayPal order'}, status=500)
+        except Exception as e:
+            print(f"Error creating order: {e}")
+            return JsonResponse({'error': 'Failed to create order'}, status=500)
+    return JsonResponse({'error': 'Invalid request method'}, status=405)
+
+def capture_order(request):
+    if request.method == 'POST':
+        try:
+            data = json.loads(request.body)
+            paypal_order_id = data.get('orderId')
+
+            # Capture PayPal order (server-side)
+            paypal_client_id = request.settings.PAYPAL_CLIENT_ID
+            paypal_secret_id = request.settings.PAYPAL_SECRET_ID
+
+            auth_response = requests.post(
+                'https://api.sandbox.paypal.com/v1/oauth2/token',
+                headers={'Accept': 'application/json', 'Accept-Language': 'en_US'},
+                data={
+                    'grant_type': 'client_credentials'
+                },
+                auth=(paypal_client_id, paypal_secret_id)
+            )
+            access_token = auth_response.json().get('access_token')
+
+            capture_url = f'https://api-m.sandbox.paypal.com/v2/checkout/orders/{paypal_order_id}/capture'
+            headers = {
+                'Content-Type': 'application/json',
+                'Authorization': f'Bearer {access_token}'
+            }
+
+            response = requests.post(capture_url, headers=headers)
+            capture_response_data = response.json()
+
+            if capture_response_data.get('status') == 'COMPLETED':
+                # Update order status to confirm
+                local_order = Order.objects.filter(order_id=paypal_order_id).first()
+                if local_order:
+                    local_order.status = 'confirmed'
+                    local_order.save()
+                return JsonResponse({'status': 'COMPLETED'})
+            else:
+                print(f"Error capturing PayPal order: {capture_response_data}")
+                return JsonResponse({'error': 'Failed to capture PayPal order'}, status=500)
+        except Exception as e:
+            print(f"Error capturing order: {e}")
+            return JsonResponse({'error': 'Failed to capture order'}, status=500)
+    return JsonResponse({'error': 'Invalid request method'}, status=405)

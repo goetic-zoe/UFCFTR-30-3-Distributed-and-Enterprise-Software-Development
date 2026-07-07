@@ -1,3 +1,5 @@
+import uuid
+
 from django.contrib.auth.models import AbstractUser
 
 from django.db import models
@@ -69,6 +71,7 @@ class Order(models.Model):
         ("completed", "Completed"),
     ]
     status = models.CharField(max_length=50, choices=STATUS_CHOICES, default='pending')
+    order_id = models.CharField(max_length=32, unique=True, default=uuid.uuid4().hex)  # Add this line
 
     def __str__(self):
         return f'Order {self.id}'

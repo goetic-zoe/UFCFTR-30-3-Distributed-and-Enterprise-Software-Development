@@ -17,7 +17,7 @@ Including another Urlconf
 from django.contrib import admin
 from django.urls import path
 from digital_marketplace_platform.views import home, register, user_login, user_logout, product_list, add_to_cart, \
-    view_cart, pledge, product_management, add_product, edit_product, delete_product
+    view_cart, pledge, product_management, add_product, edit_product, delete_product, checkout, create_order, capture_order
 
 urlpatterns = [
     path('admin/', admin.site.urls),
@@ -33,4 +33,7 @@ urlpatterns = [
     path('add-product/', add_product, name='add_product'),
     path('edit-product/<int:product_id>/', edit_product, name='edit_product'),
     path('delete-product/<int:product_id>/', delete_product, name='delete_product'),
+    path('checkout/', checkout, name='checkout'),
+    path('paypal-api/checkout/orders/create', create_order, name='create_order'),
+    path('paypal-api/checkout/orders/capture', capture_order, name='capture_order'),
 ]
