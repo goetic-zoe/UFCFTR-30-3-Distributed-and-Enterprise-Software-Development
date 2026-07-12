@@ -12,8 +12,8 @@ This project is a Django web application for a digital marketplace platform. It 
 1. **Clone the Repository:**
 
 ```shell script
-git clone <repository-url>
-   cd bristol_regional_food_network
+git clone https://github.com/goetic-zoe/UFCFTR-30-3-Distributed-and-Enterprise-Software-Development.git
+cd bristol_regional_food_network
 ```
 
 
@@ -24,16 +24,19 @@ docker-compose build
 ```
 
 
-3. **Run the Containers:**
+3. **First time run the Containers:**
 
 ```shell script
-docker-compose up -d
+docker-compose up
+docker-compose down
 ```
+After first run after build it is recommended to restart the container due to a chance of it preemptively attempting to connect to the database while it is still building.
 
 
 4. **Create and Apply Database Migrations:**
 
 ```shell script
+docker-compose up -d
 docker-compose exec web python manage.py migrate
 ```
 
