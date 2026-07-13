@@ -1,7 +1,6 @@
 from django.test import TestCase, Client
 from django.urls import reverse
-from django.contrib.auth.models import User
-from .models import Product, CartItem
+from .models import Product, CartItem, User
 
 # TC-001: As a producer, I want to create an account so that I can list my products on the marketplace.
 class ProducerRegistrationTestCase(TestCase):
@@ -25,7 +24,8 @@ class CustomerRegistrationTestCase(TestCase):
             'username': 'robertjohnson',
             'email': 'robert.johnson@email.com',
             'password1': 'securePassword123!',
-            'password2': 'securePassword123!'
+            'password2': 'securePassword123!',
+            'user_type': 'customer'
         })
         self.assertEqual(response.status_code, 302)  # Redirects to home
         user = User.objects.get(username='robertjohnson')
