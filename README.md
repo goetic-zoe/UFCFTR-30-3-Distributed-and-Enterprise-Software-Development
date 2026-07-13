@@ -20,15 +20,15 @@ cd bristol_regional_food_network
 2. **Build the Docker Images:**
 
 ```shell script
-docker-compose build
+docker compose build
 ```
 
 
 3. **First time run the Containers:**
 
 ```shell script
-docker-compose up
-docker-compose down
+docker compose up
+docker compose down
 ```
 After first run after build it is recommended to restart the container due to a chance of it preemptively attempting to connect to the database while it is still building.
 
@@ -36,15 +36,15 @@ After first run after build it is recommended to restart the container due to a 
 4. **Create and Apply Database Migrations:**
 
 ```shell script
-docker-compose up -d
-docker-compose exec web python manage.py migrate
+docker compose up -d
+docker compose exec web python manage.py migrate
 ```
 
 
 5. **Create a Superuser (Optional but recommended for admin access):**
 
 ```shell script
-docker-compose exec web python manage.py createsuperuser
+docker compose exec web python manage.py createsuperuser
 ```
 
 
@@ -53,23 +53,27 @@ docker-compose exec web python manage.py createsuperuser
 - **Start the Containers:**
 
 ```shell script
-docker-compose up -d
+docker compose up -d
 ```
 
 
 - **Stop the Containers:**
 
 ```shell script
-docker-compose down
+docker compose down
 ```
 
 
 - **View Logs:**
 
 ```shell script
-docker-compose logs -f web
+docker compose logs -f web
 ```
 
+- **Run Tests:**
+```shell script
+docker compose exec web python manage.py test
+```
 
 ## Usage
 
@@ -90,7 +94,7 @@ To access the Django admin panel, use the superuser credentials created earlier:
 The MySQL database is accessible through Docker Compose. You can connect to it using any MySQL client:
 
 ```shell script
-docker-compose exec db mysql -udjango_user -pdjango_pass bristol_food_network
+docker compose exec db mysql -udjango_user -pdjango_pass bristol_food_network
 ```
 
 
@@ -101,7 +105,7 @@ docker-compose exec db mysql -udjango_user -pdjango_pass bristol_food_network
 To run the Django shell inside the container:
 
 ```shell script
-docker-compose exec web python manage.py shell
+docker compose exec web python manage.py shell
 ```
 
 
@@ -110,7 +114,7 @@ docker-compose exec web python manage.py shell
 If you make changes to static files or add new ones, collect them using:
 
 ```shell script
-docker-compose exec web python manage.py collectstatic --noinput
+docker compose exec web python manage.py collectstatic --noinput
 ```
 
 
